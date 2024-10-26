@@ -7,7 +7,7 @@ class PonyCharacterPromptPicker:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "excel_path": ("STRING", {"default": "./resource/pony_character_prompts.xlsx"}),
+                "excel_path": ("STRING", {"default": os.path.join("resource", "pony_char_list.xlsx")}),
                 "sheet_name": ("STRING", {"default": "Female character list"}),
                 "column_letter": ("STRING", {"default": "A"}),
             },
