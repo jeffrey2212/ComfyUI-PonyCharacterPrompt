@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-ponycharacterprompt"
+description = "The Pony Character Prompt Picker node reads an Excel file specified by the user, allows manual selection of a tab, and randomly picks a cell value from a specified column, starting from row 3 to the end. The selected value is output as a string to the next node in the ComfyUI workflow."
+version = "1.0.0"
+license = {file = "LICENSE"}
+dependencies = ["openpyxl"]
+
+[project.urls]
+Repository = "https://github.com/jeffrey2212/ComfyUI-PonyCharacterPrompt"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-PonyCharacterPrompt"
+Icon = ""
