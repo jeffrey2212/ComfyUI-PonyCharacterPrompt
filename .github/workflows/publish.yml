@@ -1,0 +1,40 @@
+name: Publish to Comfy registry
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: comfy-registry-publish
+  cancel-in-progress: false
+
+jobs:
+  publish-node:
+    runs-on: ubuntu-latest
+    if: github.repository == 'jeffrey2212/ComfyUI-PonyCharacterPrompt' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Validate publishing prerequisites
+        env:
+          REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import os, re, tomllib
+          from pathlib import Path
+          data = tomllib.loads(Path("pyproject.toml").read_text())
+          assert data["tool"]["comfy"]["PublisherId"].strip(), "PublisherId is required"
+          assert re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", data["project"]["version"]), "Use X.Y.Z"
+          license = data["project"].get("license", {})
+          if isinstance(license, dict) and license.get("file"):
+              assert Path(license["file"]).is_file(), "License file is missing"
+          assert os.environ.get("REGISTRY_ACCESS_TOKEN", "").strip(), "Registry API key is required"
+          PY
+      - name: Publish Custom Node
+        uses: Comfy-Org/publish-node-action@d2366e7abb6ab16f3bb03e3520ae25c8cf749bc9 # reviewed main; supports skip_checkout
+        with:
+          skip_checkout: 'true'
+          personal_access_token: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
